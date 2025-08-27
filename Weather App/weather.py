@@ -18,9 +18,21 @@ def get_entry(event):
 
     # want to make our GET requests to the endpoint - check the data they already have, get it
     # provide params = want type of data we get back (in this case its weather info)
+
     response = requests.get(ENDPOINT, params=weather_params) # request sent to api (returns number code)
+
     weather_data = response.json()
+
+    if weather_data.get("cod") != "200":
+        print("Error fetching weather forecast: ", weather_data.get("message"))
+        
+    else:
+        print("Success! Here is your forecast: ")
+
     print(weather_data)
+    print("Response code: " + str(response))
+
+
 
     tk.Label(window, text=weather_data['list'][0]['main']).pack() # TODO: hard to read list of weather data, json format
 
@@ -29,13 +41,15 @@ def get_entry(event):
 
 def is_raining(weather_data):
     will_rain = False
+    i = 0
 
     for data in weather_data['list']:
+        i += 1
         temp_k = data['main']['feels_like']
         temp_f = ((temp_k - 273.15) * 1.8) + 32
         formatted_temp_f = '%.1f' % temp_f
         print(formatted_temp_f)
-        tk.Label(window, text=formatted_temp_f).pack()
+        tk.Label(window, text="hour (" + str(i) + ")  feels like: " + formatted_temp_f).pack()
 
     for hour_data in weather_data['list']:
         condition_code = hour_data['weather'][0]['id']
